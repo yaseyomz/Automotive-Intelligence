@@ -1,0 +1,22 @@
+{
+  "name": "automotive-intelligence",
+  "version": "1.0.0",
+  "description": "An IoT based smart automotive workshop",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yaseyomz/Automotive-Intelligence.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yaseyomz/Automotive-Intelligence/issues"
+  },
+  "homepage": "https://github.com/yaseyomz/Automotive-Intelligence#readme",
+  "dependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
