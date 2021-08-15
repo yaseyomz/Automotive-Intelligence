@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/yaseyomz/Automotive-Intelligence#readme",
   "dependencies": {
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "mongoose": "^5.13.7",
     "nodemon": "^2.0.12",
     "path": "^0.12.7",
     "serve-favicon": "^2.5.0"
