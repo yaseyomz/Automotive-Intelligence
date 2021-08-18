@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const favicon = require('serve-favicon');
 const path = require('path');
-const itemRoutes = require('./routes/itemRoutes');
+const toolRoutes = require('./routes/toolRoutes');
 
 // create express app
 const app = express();
@@ -23,7 +23,6 @@ mongoose.connect(uri, options).then(() => {
 });
 
 // ------ middlewares -------
-
 // set view engine
 app.set('view engine', 'ejs');
 

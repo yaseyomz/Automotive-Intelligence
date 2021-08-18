@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // create new database schema
-const itemSchema = new Schema({
+const toolSchema = new Schema({
 
 });
 
-// create and export item instance
-const Item = mongoose.model('Blog', itemSchema);
-module.exports = Item; 
+// create and export tool instance
+const Tool = mongoose.model('Tool', toolSchema);
+module.exports = Tool;
