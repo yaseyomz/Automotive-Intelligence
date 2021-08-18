@@ -20,6 +20,8 @@ mongoose.connect(uri, options).then(() => {
     console.log(err);
 });
 
+// ------ middlewares -------
+
 // set view engine
 app.set('view engine', 'ejs');
 
