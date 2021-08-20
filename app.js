@@ -5,6 +5,7 @@ const favicon = require('serve-favicon');
 const path = require('path');
 const toolRoutes = require('./routes/toolRoutes');
 const partRoutes = require('./routes/partRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
 
 // create express app
 const app = express();
@@ -40,6 +41,9 @@ app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
 app.get('/', (req, res) => {
     res.render('index', { title: 'Automotive Intelligence | Home' });
 });
+
+// service routes
+app.use('/services', serviceRoutes);
 
 // tool routes
 app.use('/tools', toolRoutes);
