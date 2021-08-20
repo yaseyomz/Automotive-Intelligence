@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const favicon = require('serve-favicon');
 const path = require('path');
 const toolRoutes = require('./routes/toolRoutes');
+const partRoutes = require('./routes/partRoutes');
 
 // create express app
 const app = express();
@@ -22,7 +23,7 @@ mongoose.connect(uri, options).then((result) => {
     console.log(err);
 });
 
-// ------ middlewares -------
+/// ------ middlewares -------
 // set view engine
 app.set('view engine', 'ejs');
 
@@ -44,9 +45,7 @@ app.get('/', (req, res) => {
 app.use('/tools', toolRoutes);
 
 // part routes
-app.get('/parts', (req, res) => {
-    res.render('parts', { title: 'Automotive Intelligence | Parts' });
-});
+app.use('/parts', partRoutes);
 
 // 404 page
 app.use((req, res) => {
