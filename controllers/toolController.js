@@ -6,9 +6,22 @@ const getAddTool = (req, res) => {
     res.render('addTool', { title: 'Add a new tool' });
 }
 
+const getFindTool = (req, res) => {
+    res.render('findTool', { title: 'Find a tool' });
+}
+
 const getAllTools = (req, res) => {
     Tool.find().sort({ createdAt: -1 }).then((result) => {
         res.render('tools', { tools: result, title: 'Automotive Intelligence | Tools' });
+    }).catch((err) => {
+        console.log(err);
+    });
+}
+
+const postFindTool = (req, res) => {
+    const tool = req.body.search;
+    Tool.find({ "name": { $regex: ".*" + tool + ".*" } }).then((result) => {
+        res.render('toolDetails', { tool: result, title: 'Tool Details' });
     }).catch((err) => {
         console.log(err);
     });
@@ -46,8 +59,10 @@ const deleteTool = (req, res) => {
 toolController = { };
 toolController = {
     getAddTool,
+    getFindTool,
     getAllTools,
     postAddTool,
+    postFindTool,
     getTool,
     deleteTool
 };
