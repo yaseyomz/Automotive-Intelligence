@@ -1,15 +1,23 @@
 // import required modules
 const express = require('express');
+const https = require('https');
 const mongoose = require('mongoose');
 const favicon = require('serve-favicon');
 const path = require('path');
+const fs = require('fs');
 const toolRoutes = require('./routes/toolRoutes');
 const partRoutes = require('./routes/partRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 
 // create express app
 const app = express();
-const port = 3000;
+
+// set application port and ssl certificate
+const port = process.env.PORT || 443;
+const httpsOptions = {
+    key: fs.readFileSync(path.join(__dirname,'sslcert/server.key')),
+    cert: fs.readFileSync(path.join(__dirname,'sslcert/server.crt'))
+}
 
 // connect to mongodb & listen for requests
 const uri = 'mongodb+srv://sit725:sit725@Deakin@cluster0.lztrc.mongodb.net/automotive-intelligence?retryWrites=true&w=majority';
@@ -17,7 +25,7 @@ const options = { useNewUrlParser: true, useUnifiedTopology: true, useCreateInde
 
 mongoose.connect(uri, options).then((result) => {
     console.log("Database connected");
-    app.listen(port, () => {
+    https.createServer(httpsOptions, app).listen(port, () => {
         console.log(`Server is running on port ${port}`);
     });
 }).catch((err) => {
