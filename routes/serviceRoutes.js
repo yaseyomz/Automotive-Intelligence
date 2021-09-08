@@ -1,4 +1,4 @@
-// import require modules
+// import required modules
 const express = require('express');
 const serviceController = require('../controllers/serviceController');
 

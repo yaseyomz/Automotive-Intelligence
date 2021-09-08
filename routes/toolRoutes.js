@@ -1,4 +1,4 @@
-// import require modules
+// import required modules
 const express = require('express');
 const toolController = require('../controllers/toolController');
 
