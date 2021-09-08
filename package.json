@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/yaseyomz/Automotive-Intelligence#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "chai": "^4.3.4",
     "cookie-parser": "^1.4.5",
     "dotenv": "^10.0.0",
@@ -28,6 +29,7 @@
     "mongoose": "^5.13.7",
     "nodemon": "^2.0.12",
     "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "request": "^2.88.2",
     "serve-favicon": "^2.5.0"
