@@ -1,58 +1,131 @@
-const GOOGLE_CLIENT_ID = '722578409329-dr3min80edhae3n7i92qqeop2gob6sqo.apps.googleusercontent.com';
-const FACEBOOK_CLIENT_ID = '249141440286033';
-const GOOGLE_REDIRECT_URI = 'https://localhost/users/auth/google';
-const FACEBOOK_REDIRECT_URI = 'https://localhost/users/auth/facebook';
+// import required modules
+const fetch = require('node-fetch');
+const bcrypt = require('bcryptjs');
+const { OAuth2Client } = require('google-auth-library');
+const { URL, URLSearchParams } = require('url');
 
-// request auth code from google
-function socialLogin(id) {
-    // google oauth2 endpoint
-    const googleOauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+// import models
+const User = require('../models/userModel');
 
-    // facebook oauth2 endpoint
-    const facebookOauth2Endpoint = 'https://www.facebook.com/v10.0/dialog/oauth';
+// dotenv for storing static censored data
+require("dotenv").config();
 
-    let google = false;
-    let params = null;
+const client = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    'https://localhost/users/auth/google'
+);
 
-    // check the clicked button id
-    if (id === "google") {
-        google = true;
+const getUserData = async (accessToken) => {
+    const urlFetchData = new URL(`https://graph.facebook.com/me`);
+
+    const params = {
+        fields: "name,email",
+        access_token: accessToken
     }
 
-    // create form element to open oauth2 endpoint
-    const form = document.createElement('form');
-    form.setAttribute('method', 'GET');
-    form.setAttribute('action', google ? googleOauth2Endpoint : facebookOauth2Endpoint);
+    urlFetchData.search = new URLSearchParams(params).toString();
 
-    // parameters to pass to oauth2 endpoint
-    if (google) {
-        params = {
-            'client_id': GOOGLE_CLIENT_ID,
-            'redirect_uri': GOOGLE_REDIRECT_URI,
-            'scope': 'https://www.googleapis.com/auth/userinfo.profile',
-            'include_granted_scopes': 'true',
-            'response_type': 'code'
+    const userData = await fetch(urlFetchData, {
+        method: 'GET'
+    }).then((res) => {
+        return res.json();
+    }).then((userData) => {
+        return userData;
+    }).catch((err) => {
+        console.log(err);
+        return err;
+    });
+
+    return userData;
+}
+
+exports.ensureAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+
+    res.redirect('/users/login');
+}
+
+exports.addUser = (req, user) => {
+    User.findOne({ email: user.email }).then((dbUser) => {
+        if (dbUser) {
+            req.login(dbUser, (err) => {
+                if(err) return next(err);
+            });
+
+            console.log("This user already exists");
+            console.log(req.user);
+            console.log(req.session);
+        } else {
+            dbUser = {
+                name: user.name,
+                email: user.email,
+                password: user.id
+            }
+
+            const newUser = new User(dbUser);
+
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(dbUser.password, salt, (err, hash) => {
+                    if (err) throw err;
+                    newUser.password = hash;
+        
+                    newUser.save().then((user) => {
+                        req.login(user, (err) => {
+                            if(err) return next(err);
+                        });
+                        
+                        console.log("User has been added to the database");
+                        console.log(req.user);
+                        console.log(req.session);
+                    }).catch((err) => {
+                        console.log(err);
+                    });
+                });
+            });
         }
-    } else {
-        params = {
-            'client_id': FACEBOOK_CLIENT_ID,
-            'redirect_uri': FACEBOOK_REDIRECT_URI,
-            'scope': 'public_profile,email',
-            'include_granted_scopes': 'true',
-            'response_type': 'code'
-        }
-    }
+    });
+}
 
-    // add form parameters as hidden input values
-    for (let p in params) {
-        let input = document.createElement('input');
-        input.setAttribute('type', 'hidden');
-        input.setAttribute('name', p);
-        input.setAttribute('value', params[p]);
-        form.appendChild(input);
-    }
+exports.getGoogleProfile = async (code) => {
+    const authToken = await client.getToken(code);
+    const idToken = authToken.tokens.id_token;
 
-    // append form and submit
-    document.body.appendChild(form);
-    form.submit();
+    const ticket = await client.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    return payload;
+}
+
+exports.getFacebookProfile = async (code) => {
+    const urlFetchToken = new URL('https://graph.facebook.com/oauth/access_token');
+
+    const params = {
+        client_id: process.env.FACEBOOK_CLIENT_ID,
+        client_secret: process.env.FACEBOOK_CLIENT_SECRET,
+        redirect_uri: "https://localhost/users/auth/facebook",
+        code: code
+    };
+
+    urlFetchToken.search = new URLSearchParams(params).toString();
+
+    const profile = await fetch(urlFetchToken, {
+        method: 'GET'
+    }).then((res) => {
+        return res.json();
+    }).then((token) => {
+        const userData = getUserData(token.access_token);
+        return userData;
+    }).catch((err) => {
+        console.log(err);
+        return err;
+    });
+
+    return profile;
 }

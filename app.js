@@ -15,6 +15,12 @@ const toolRoutes = require('./routes/toolRoutes');
 const partRoutes = require('./routes/partRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 
+// import authenticate user cofig
+const { ensureAuthenticated } = require('./config/auth');
+
+// import passport config
+require("./config/passport")(passport);
+
 // import .env config for environment variables
 require('dotenv').config();
 
@@ -69,29 +75,26 @@ app.use(
 	})
 );
 
-// import passport config
-require("./config/passport")(passport);
-
 // passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
 /// routes
-app.get('/', (req, res) => {
-    res.render('index', { title: 'Automotive Intelligence | Home' });
+app.get('/', ensureAuthenticated, (req, res) => {
+    res.render('index', { email: req.user.email, title: 'Automotive Intelligence | Home' });
 });
 
 // user routes
 app.use('/users', userRoutes);
 
 // service routes
-app.use('/services', serviceRoutes);
+app.use('/services', ensureAuthenticated,  serviceRoutes);
 
 // tool routes
-app.use('/tools', toolRoutes);
+app.use('/tools', ensureAuthenticated, toolRoutes);
 
 // part routes
-app.use('/parts', partRoutes);
+app.use('/parts', ensureAuthenticated, partRoutes);
 
 // 404 page
 app.use((req, res) => {
