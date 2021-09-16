@@ -11,9 +11,12 @@ const cookieParser = require('cookie-parser');
 
 // import routes
 const userRoutes = require('./routes/userRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
 const toolRoutes = require('./routes/toolRoutes');
 const partRoutes = require('./routes/partRoutes');
-const serviceRoutes = require('./routes/serviceRoutes');
+
+// import controllers
+const dashboardController = require('./controllers/dashboardController');
 
 // import authenticate user cofig
 const { ensureAuthenticated } = require('./config/auth');
@@ -47,15 +50,17 @@ mongoose.connect(uri, options).then((result) => {
     console.log(err);
 });
 
-/// ------ middlewares -------
 // set view engine
 app.set('view engine', 'ejs');
 
+/// middlewares
 // set static files
 app.use(express.static('public'));
 
+
 // set favicon
 app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
+
 
 // use express body parser & cookie parser middleware
 app.use(express.json());
@@ -80,15 +85,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 /// routes
-app.get('/', ensureAuthenticated, (req, res) => {
-    res.render('index', { email: req.user.email, title: 'Automotive Intelligence | Home' });
-});
+// dashboard routes
+app.get('/', ensureAuthenticated, dashboardController.getAllDashboard);
 
 // user routes
 app.use('/users', userRoutes);
 
 // service routes
-app.use('/services', ensureAuthenticated,  serviceRoutes);
+app.use('/services', ensureAuthenticated, serviceRoutes);
 
 // tool routes
 app.use('/tools', ensureAuthenticated, toolRoutes);
@@ -99,4 +103,4 @@ app.use('/parts', ensureAuthenticated, partRoutes);
 // 404 page
 app.use((req, res) => {
     res.status(404).render('404', { title: 'Page not found' });
-}); 
+});
