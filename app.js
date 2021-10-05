@@ -14,6 +14,7 @@ const userRoutes = require('./routes/userRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const toolRoutes = require('./routes/toolRoutes');
 const partRoutes = require('./routes/partRoutes');
+const nfcRoutes = require('./routes/nfcRoutes');
 
 // import controllers
 const dashboardController = require('./controllers/dashboardController');
@@ -85,7 +86,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 /// routes
-// dashboard routes
 app.get('/', ensureAuthenticated, dashboardController.getAllDashboard);
 
 // user routes
@@ -99,6 +99,8 @@ app.use('/tools', ensureAuthenticated, toolRoutes);
 
 // part routes
 app.use('/parts', ensureAuthenticated, partRoutes);
+
+app.use('/nfc', nfcRoutes);
 
 // 404 page
 app.use((req, res) => {
