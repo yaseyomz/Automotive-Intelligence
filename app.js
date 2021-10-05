@@ -7,6 +7,7 @@ const favicon = require('serve-favicon');
 const passport = require('passport');
 const path = require('path');
 const fs = require('fs');
+const flash = require("connect-flash");
 const cookieParser = require('cookie-parser');
 
 // import routes
@@ -14,7 +15,6 @@ const userRoutes = require('./routes/userRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const toolRoutes = require('./routes/toolRoutes');
 const partRoutes = require('./routes/partRoutes');
-const clientRoutes = require('./routes/clientRoutes');
 
 // import controllers
 const dashboardController = require('./controllers/dashboardController');
@@ -68,18 +68,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// set express session
+// set express session & connect flash middleware
 app.use(
 	session({
 		secret: process.env.SECRET,
 		resave: true,
 		saveUninitialized: true,
 		cookie: {
+            sameSite: 'none',
             secure: true,
 			maxAge: 3600000
 		}
 	})
 );
+app.use(flash());
 
 // passport middleware
 app.use(passport.initialize());
@@ -99,9 +101,6 @@ app.use('/tools', ensureAuthenticated, toolRoutes);
 
 // part routes
 app.use('/parts', ensureAuthenticated, partRoutes);
-
-//client routes
-app.use('/client',ensureAuthenticated, clientRoutes);
 
 // 404 page
 app.use((req, res) => {
