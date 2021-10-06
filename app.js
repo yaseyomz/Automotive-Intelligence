@@ -7,6 +7,7 @@ const favicon = require('serve-favicon');
 const passport = require('passport');
 const path = require('path');
 const fs = require('fs');
+const flash = require("connect-flash");
 const cookieParser = require('cookie-parser');
 
 // import routes
@@ -14,9 +15,10 @@ const userRoutes = require('./routes/userRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const toolRoutes = require('./routes/toolRoutes');
 const partRoutes = require('./routes/partRoutes');
-const clientRoutes = require('./routes/clientRoutes');
+const nfcRoutes = require('./routes/nfcRoutes');
 
 // import controllers
+const clientController = require('./controllers/clientController');
 const dashboardController = require('./controllers/dashboardController');
 
 // import authenticate user cofig
@@ -58,35 +60,40 @@ app.set('view engine', 'ejs');
 // set static files
 app.use(express.static('public'));
 
-
 // set favicon
 app.use(favicon(path.join(__dirname, 'public/images', 'favicon.ico')));
-
 
 // use express body parser & cookie parser middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// set express session
+// set express session & connect flash middleware
 app.use(
 	session({
 		secret: process.env.SECRET,
 		resave: true,
 		saveUninitialized: true,
 		cookie: {
+            sameSite: 'none',
             secure: true,
 			maxAge: 3600000
 		}
 	})
 );
+app.use(flash());
 
 // passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
 /// routes
-app.get('/', ensureAuthenticated, dashboardController.getAllDashboard);
+// client routes
+app.get('/home', clientController.getClientView);
+app.get('/booking', clientController.getClientBooking);
+
+// admin dashboard routes
+app.get('/', ensureAuthenticated, dashboardController.getDashboard);
 
 // user routes
 app.use('/users', userRoutes);
@@ -100,10 +107,8 @@ app.use('/tools', ensureAuthenticated, toolRoutes);
 // part routes
 app.use('/parts', ensureAuthenticated, partRoutes);
 
-//client routes
-app.use('/home', clientController.getclients);
-app.use('/form',clientController.getclientsform);
-
+// nfc routes
+app.use('/nfc', nfcRoutes);
 
 // 404 page
 app.use((req, res) => {
