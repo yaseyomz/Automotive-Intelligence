@@ -159,7 +159,7 @@ h3 {
     width: 2.5%;
     text-align: center;
 	border-radius: 50%;
-	padding: 10px 8px 8px;
+	padding: 8px;
 }
 
 .delete:hover {
@@ -237,12 +237,11 @@ textarea {
 .search input {
     display: inline-block;
 	font-size: 14px;
-	width: 80%;
+	width: 60%;
     padding: 8px;
 }
 
 .search button {
-	float: right;
 	width: 15%;
 	padding: 8px;
 	font-size: 18px;
@@ -250,7 +249,7 @@ textarea {
     color: white;
     border: 0;
 	cursor: pointer;
-    border-radius: 0px 2px 2px 0px;
+    border-radius: 2px 2px 2px 2px;
 }
 
 .search button:hover {
@@ -464,10 +463,6 @@ list-type-ulli,
 	cursor: pointer;   
 }
 
-.profile button:hover {
-	filter: brightness(0.8);
-}
-
 .profile .username {
 	margin-bottom: 4px;
 }
@@ -668,7 +663,7 @@ figure {
 	border: none;
 	outline: none;
 	width: 100%;
-	padding: 12px 39px;
+	padding: 15px 39px;
 	border-radius: 5px;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -710,7 +705,7 @@ figure {
 
 .form-group {
 	position: relative;
-	margin-bottom: 15px;
+	margin-bottom: 25px;
 	overflow: hidden;
 }
 
@@ -826,7 +821,7 @@ figure {
 .sign label {
 	position: absolute;
 	left: 0;
-	top: 39%;
+	top: 50%;
 	transform: translateY(-50%);
 	-moz-transform: translateY(-50%);
 	-webkit-transform: translateY(-50%);
@@ -895,7 +890,7 @@ figure {
 	-webkit-align-items: center;
 	-o-align-items: center;
 	-ms-align-items: center;
-	margin-top: 40px;
+	margin-top: 80px;
 }
 
 .sign .social-label {
