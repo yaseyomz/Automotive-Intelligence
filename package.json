@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/yaseyomz/Automotive-Intelligence#readme",
   "dependencies": {
+    "axios": "^0.22.0",
     "bcryptjs": "^2.4.3",
     "chai": "^4.3.4",
     "connect-flash": "^0.1.1",
